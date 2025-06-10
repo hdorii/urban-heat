@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>열섬 예측 모델 데이터 컬럼 설명</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .feature-card {
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body class="container my-5">
+  <h1 class="mb-4">🌡️ 열섬 예측 모델 - 데이터 피처 설명</h1>
+
+  <div class="row">
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">District</h5>
+          <p class="card-text">서울시 자치구 이름 (예: Dobong-gu)<br>지리/도시 구조적 차이를 반영하는 범주형 변수</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">green_rate</h5>
+          <p class="card-text">녹지 비율 (단위: %)<br>높을수록 열섬 효과를 줄일 수 있음</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Building_Density</h5>
+          <p class="card-text">건물 밀도<br>높을수록 열섬 강도 증가 가능성</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">car_registration_count</h5>
+          <p class="card-text">자동차 등록 대수<br>높을수록 열섬 강도 증가 가능성</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">population_density</h5>
+          <p class="card-text">단위 면적당 인구수<br>높을수록 열섬 강도 증가 가능성</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">avg_km_per_road_km</h5>
+          <p class="card-text">도로 km당 평균 주행 km<br>높을수록 열섬 강도 증가 가능성</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">UHII</h5>
+          <p class="card-text">열섬 강도<br>높을수록 열섬 강도 증가 가능성</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">timestamp</h5>
+          <p class="card-text">해당 데이터가 측정된 정확한 날짜와 시간 정보<br>시간 순서를 정렬하고 다른 시간 기반 피처(hour_sin, hour_cos 등) 및 지연 피처를 생성하는 데 핵심적인 역할</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">hour_sin</h5>
+          <p class="card-text">시간의 사인 변환 값<br>시간의 주기성을 모델에 효과적으로 전달</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">hour_cos</h5>
+          <p class="card-text">시간의 코사인 변환 값<br>hour_sin과 함께 사용하여 시간의 주기성을 더욱 정확하게 표현</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">day_of_week_sin</h5>
+          <p class="card-text">한 주의 7일 주기를 사인 함수로 변환한 수치<br>주중/주말에 따라 도시 활동량과 교통량이 달라지는 부분을 반영</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">day_of_week_cos</h5>
+          <p class="card-text">한 주의 7일 주기를 코사인 함수로 변환한 수치<br>day_of_week_sin과 함께 사용하여 요일의 주기성을 더욱 정확하게 표현</p>
+        </div>
+      </div>
+    </div>
+
+        <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">is_night_time</h5>
+          <p class="card-text">야간 시간대 여부<br>열섬은 야간에 특히 심화되므로 해당 시간대인지 여부를 반영</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">suburban_temp_current</h5>
+          <p class="card-text">현재 교외 온도<br>도시 온도와의 차이를 통해 열섬 강도를 계산하는 기준값</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">suburban_temp_lag_24hr</h5>
+          <p class="card-text">24시간 전 교외 온도<br>일일 주기성을 반영하여 열 축적/변화 추세 파악</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">suburban_temp_ma_24hr</h5>
+          <p class="card-text">최근 24시간 교외 온도 이동 평균<br>도시의 열 축적 정도를 간접적으로 반영하는 변수</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">suburban_temp_lag_3hr</h5>
+          <p class="card-text">3시간 전 교외 온도<br>단기적인 온도 변화가 현재 열섬 강도에 주는 영향을 반영</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">UHII_lag_8</h5>
+          <p class="card-text">24시간 전 열섬 강도(UHII)<br>열섬의 일일 반복성을 반영하는 가장 강력한 예측 변수 중 하나</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 feature-card">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">UHII_lag_1</h5>
+          <p class="card-text">3시간 전 열섬 강도(UHII)<br>단기적인 지속성과 현재 열섬 강도 예측에 중요한 변수</p>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <a href="/" class="btn btn-secondary mt-4">🏠 홈으로 돌아가기</a>
+</body>
+</html>

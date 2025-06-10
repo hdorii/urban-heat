@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UHII 예측 시뮬레이션</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="container my-5">
+    <h1 class="mb-4 text-center">도시 열섬 (UHII) 예측 시뮬레이션</h1>
+
+    <form id="prediction-form" class="row g-3">
+      <div class="col-md-6">
+        <label for="District" class="form-label">District (구 이름)</label>
+        <input
+          type="text"
+          class="form-control"
+          id="District"
+          name="District"
+          placeholder="예: Gangnam-gu"
+          required
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="green_rate" class="form-label">Green Rate (녹지 비율)</label>
+        <input
+          type="number"
+          step="0.01"
+          class="form-control"
+          id="green_rate"
+          name="green_rate"
+          placeholder="예: 0.35"
+          required
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="Building_Density" class="form-label">Building Density (건물 밀도)</label>
+        <input
+          type="number"
+          step="0.01"
+          class="form-control"
+          id="Building_Density"
+          name="Building_Density"
+          placeholder="예: 0.8"
+          required
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="car_registration_count" class="form-label">Car Registration Count (차량 등록 대수)</label>
+        <input
+          type="number"
+          class="form-control"
+          id="car_registration_count"
+          name="car_registration_count"
+          placeholder="예: 12000"
+          required
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="population_density" class="form-label">Population Density (인구 밀도)</label>
+        <input
+          type="number"
+          step="0.01"
+          class="form-control"
+          id="population_density"
+          name="population_density"
+          placeholder="예: 15000"
+          required
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="avg_km_per_road_km" class="form-label">Avg km per Road km (도로당 평균 km)</label>
+        <input
+          type="number"
+          step="0.01"
+          class="form-control"
+          id="avg_km_per_road_km"
+          name="avg_km_per_road_km"
+          placeholder="예: 1.2"
+          required
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="timestamp" class="form-label">Timestamp (YYYY-MM-DD HH:MM:SS)</label>
+        <input
+          type="text"
+          class="form-control"
+          id="timestamp"
+          name="timestamp"
+          placeholder="예: 2025-06-05 14:00:00"
+          required
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="suburban_temp_current" class="form-label">Suburban Temp Current (교외 현재 온도)</label>
+        <input
+          type="number"
+          step="0.01"
+          class="form-control"
+          id="suburban_temp_current"
+          name="suburban_temp_current"
+          placeholder="시간을 입력하면 자동으로 불러옵니다"
+          readonly
+        />
+        <div id="temp-status" class="form-text text-muted"></div>
+      </div>
+
+
+      <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary btn-lg px-5">예측하기</button>
+      </div>
+    </form>
+
+    <div id="result" class="mt-5 text-center fs-4 fw-bold"></div>
+  </div>
+
+  <script>
+ document.getElementById("prediction-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const jsonData = {};
+    for (let [key, value] of formData.entries()) {
+      jsonData[key] =
+        key === "District" || key === "timestamp" ? value : parseFloat(value);
+    }
+
+    try {
+      const response = await fetch("/predict_result", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jsonData),
+      });
+
+      const result = await response.json();
+      console.log("서버 응답:", result);
+
+      if (result.predictions && result.predictions.length > 0) {
+        const prediction = result.predictions[0];  // 객체임
+        const value = prediction.predict;          // 숫자
+
+        if (typeof value === "number") {
+          document.getElementById("result").innerText = `예측된 UHII: ${value.toFixed(3)}`;
+        } else {
+          document.getElementById("result").innerText = "예측값이 숫자가 아닙니다.";
+        }
+      } else if (result.error) {
+        document.getElementById("result").innerText = `오류: ${result.error}`;
+      } else {
+        document.getElementById("result").innerText = "예측 결과를 받을 수 없습니다.";
+      }
+    } catch (error) {
+      document.getElementById("result").innerText = `요청 실패: ${error.message}`;
+    }
+
+  });
+  </script>
+
+  <script>
+document.getElementById("timestamp").addEventListener("blur", async function () {
+  const timestamp = this.value;
+  const status = document.getElementById("temp-status");
+  const tempField = document.getElementById("suburban_temp_current");
+
+  if (!timestamp) return;
+
+  status.innerText = "기온 정보를 불러오는 중...";
+  tempField.value = "";
+
+  try {
+    const response = await fetch("/get_temperature", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ timestamp: timestamp })
+    });
+
+    const result = await response.json();
+
+    if (result.temperature !== undefined) {
+      tempField.value = result.temperature.toFixed(2);
+      status.innerText = "기온 정보가 자동 입력되었습니다.";
+    } else {
+      status.innerText = "기온 데이터를 가져오지 못했습니다.";
+    }
+  } catch (err) {
+    status.innerText = "오류 발생: " + err.message;
+  }
+});
+</script>
+
+
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>
